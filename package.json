@@ -2,7 +2,7 @@
   "author": "Josh Dolitsky <jdolitsky@gmail.com>",
   "name": "gitsum",
   "description": "easy deployment with node.js and git",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "lib/gitsum.js",
   "dependencies": {
     "express": "*",
@@ -14,6 +14,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nodejitsu/http-server.git"
+    "url": "https://github.com/jdolitsky/gitsum"
   }
 }

@@ -39,24 +39,28 @@ if mode in server_commands
   app.post '/gitsum', (req, res) ->
     commit = req.headers.commit
     console.log 'verifying commit '+commit+'...'
-    exec 'git show '+commit, (err, stdout, stderr) ->
-      temp_array = stdout.trim().split('\n')
-      count = 0;
-      for line in temp_array
-        if ~line.indexOf 'new file mode'
-          prev = temp_array[count-1]
-          if ~prev.indexOf 'gitsum/'
-            addition = prev.split '/'
-            file = addition[addition.length-1]
-            exec '[ -f ./gitsum_tokens/'+file+' ] && echo "1" || echo "0"', (err, stdout, stderr) ->
-              if stdout.trim() == '1'
-                console.log 'commit verified!'
-                exec 'rm -rf ./gitsum_tokens', (err, stdout, stderr) ->
-                  console.log 'cherry-picking commit '+commit+'...'
-                  exec 'git cherry-pick '+commit, (err, stdout, stderr) ->
-                    console.log 'done!'
-                    res.send 'hi'
-        count++
+    exec 'git pull', (err, stdout, stderr) ->
+
+      exec 'git show '+commit, (err, stdout, stderr) ->
+
+        temp_array = stdout.trim().split('\n')
+
+        count = 0;
+        for line in temp_array
+          if ~line.indexOf 'new file mode'
+            prev = temp_array[count-1]
+            if prev and ~prev.indexOf 'gitsum_token/'
+              addition = prev.split '/'
+              file = addition[addition.length-1]
+              exec '[ -f ./gitsum_server/'+file+' ] && echo "1" || echo "0"', (err, stdout, stderr) ->
+                if stdout.trim() == '1'
+                  console.log 'commit verified!'
+                  exec 'rm -rf ./gitsum_server', (err, stdout, stderr) ->
+                    console.log 'deploying...'
+                    exec 'git reset --hard '+commit, (err, stdout, stderr) ->
+                      console.log 'done!'
+                      res.send '1'
+          count++
      
   app.get '/gitsum', (req, res) ->
     current_date = (new Date()).valueOf().toString()
@@ -92,9 +96,9 @@ if mode in server_commands
 
     console.log '\ntoken: '+file_name+' sent to '+x_ip
 
-    exec 'rm -rf ./gitsum_tokens', (err, stdout, stderr) ->
-      exec 'mkdir ./gitsum_tokens', (err, stdout, stderr) ->
-        exec 'touch ./gitsum_tokens/'+file_name, (err, stdout, stderr) ->
+    exec 'rm -rf ./gitsum_server', (err, stdout, stderr) ->
+      exec 'mkdir ./gitsum_server', (err, stdout, stderr) ->
+        exec 'touch ./gitsum_server/'+file_name, (err, stdout, stderr) ->
           res.send file_name
 
 
@@ -129,13 +133,13 @@ else if mode in push_commands and arg3
 
       console.log 'token received\n:-------------------------------------------------:\n: '+str+' :'
       console.log ':-------------------------------------------------:'
-      console.log 'overwriting ./gitsum'
+      console.log 'overwriting ./gitsum_token'
 
-      exec 'rm -rf ./gitsum', (err, stdout, stderr) ->
-        exec 'git rm ./gitsum/*', (err, stdout, stderr) ->
-          exec 'mkdir ./gitsum', (err, stdout, stderr) ->
-            console.log 'creating token file ./gitsum/'+str
-            exec 'touch ./gitsum/'+str, (err, stdout, stderr) ->
+      exec 'rm -rf ./gitsum_token', (err, stdout, stderr) ->
+        exec 'git rm ./gitsum_token/*', (err, stdout, stderr) ->
+          exec 'mkdir ./gitsum_token', (err, stdout, stderr) ->
+            console.log 'creating token file ./gitsum_token/'+str
+            exec 'touch ./gitsum_token/'+str, (err, stdout, stderr) ->
               console.log 'adding all files'
               exec 'git add *', (err, stdout, stderr) ->
                 console.log 'commiting with message "'+message+'"'
