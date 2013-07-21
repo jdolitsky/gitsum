@@ -34,6 +34,7 @@ if mode in server_commands
   express = require 'express'
   app = express()
   app.listen port
+
   crypto = require 'crypto'
 
   app.post '/gitsum', (req, res) ->

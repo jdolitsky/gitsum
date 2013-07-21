@@ -1,6 +1,6 @@
 gitsum
 ======
-easy deployment with node.js and git
+easy deployment with node.js and git 
 
 ##Overview
 This module will allow you to easily create a heroku-like deployment environment on your own.
