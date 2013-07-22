@@ -87,7 +87,6 @@ if mode in server_commands
 
     final = mix.join ''
     hash = crypto.createHash('sha1').update(final).digest('hex')
-
     file_name = shake + '.' + hash
     
     x_ip = req.headers['x-forwarded-for']
