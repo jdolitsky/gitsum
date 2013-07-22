@@ -10,18 +10,34 @@ Install this on both your local machine as well as your remote server by running
 ```
 npm install -g gitsum
 ```
+*Note: both your machine and the server must have read/write access to the same remote repository.*
 
 ##Usage
-###gitsum server
+###(1) gitsum server
 Inside an initialized git repository, run the following to start the server:
 ```
 gitsum server
 ```
 This server running on **port 3013** is watching for incoming commit requests. When it receives a valid commit request, gitsum will automatically pull and merge your changes on the server.<br><br>
-To run gitsum server on a different port, use the -p option:
+To run gitsum server on a different port (e.g. 3000), use the -p option:
 ```
 gitsum server -p 3000
 ```
 
-###gitsum push
- 
+###(2) gitsum push
+When you have made changes to the codebase on your local machine, you can add, commit, push your changes **AND** deploy those changes to the server all with one command:
+```
+gitsum push mysite.com
+```
+ \- where "mysite.com" is the host name of your server. You can also push directly to an IP address:
+```
+gitsum push 67.195.160.76
+```
+If your gitsum server is running on a port other than 3013, you must specify:
+```
+gitsum push mysite.com:3000
+```
+By default, the message on the commit is "gitsum push". If you want a custom message, just use the -m option:
+```
+gitsum push mysite.com -m "my commit message"
+```
